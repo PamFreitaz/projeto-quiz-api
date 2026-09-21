@@ -12,7 +12,7 @@ export class InitialSchema1789673278327 implements MigrationInterface {
                 weight_points  DECIMAL(6,2)  NOT NULL,
                 numeric_answer DECIMAL(18,6) NULL,
                 tolerance      DECIMAL(18,6) NULL,
-                created_at     DATETIME2(3)  NOT NULL DEFAULT SYSUTCDATETIME()
+                created_at     DATETIME2(3)  NOT NULL DEFAULT SYSUTCDATETIME()  -- SYSUTCDATETIME grava em UTC
             )
         `);
 

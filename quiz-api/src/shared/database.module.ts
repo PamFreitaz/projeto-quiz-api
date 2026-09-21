@@ -1,4 +1,4 @@
-import { Inject, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -17,7 +17,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
           encrypt: false, // instância local, sem TLS
           trustServerCertificate: true,
         },
-        synchronize: false,
+        synchronize: false, //para o typeORM não fazer mudanças no banco sozinho
         logging: true,
         migrations: ['dist/migrations/*.js'],
       }),

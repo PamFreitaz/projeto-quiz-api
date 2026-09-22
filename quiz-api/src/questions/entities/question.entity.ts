@@ -1,6 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn, TableInheritance } from "typeorm";
 
 @Entity('questions')
+// STI: as 3 subclasses dividem esta tabela, question_type diz qual é cada linha
 @TableInheritance({ column: { type: 'nvarchar', name: 'question_type' } })
 export abstract class Question {
 
@@ -18,6 +19,7 @@ export abstract class Question {
     })
     weightPoints: number;
 
+    // insert false deixa o DEFAULT SYSUTCDATETIME() do banco gravar garantindo UTC
     @Column({ type: 'datetime2', insert: false, update: false, name: 'created_at' })
     createdAt: Date;
 

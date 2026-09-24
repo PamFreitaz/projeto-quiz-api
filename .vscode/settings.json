@@ -1,0 +1,7 @@
+{
+  // O projeto TypeScript fica em quiz-api/, um nível abaixo da pasta aberta.
+  // Sem esta linha o VS Code não encontra o TypeScript do projeto e usa a
+  // versão embutida dele, que diverge da usada pelo `npm run build`.
+  "typescript.tsdk": "quiz-api/node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true
+}

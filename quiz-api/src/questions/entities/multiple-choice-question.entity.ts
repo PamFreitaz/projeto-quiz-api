@@ -7,7 +7,8 @@ import { AutoGradable } from "../auto-gradable";
 export class MultipleChoiceQuestion extends Question implements AutoGradable {
    
     //eager true é para já trazer as alternativas junto quando busca a questão no banco
-    @OneToMany(() => Choice, (choice) => choice.question, { eager: true}) 
+    //cascade true salva no banco as alternativas junto quando salva a questão
+    @OneToMany(() => Choice, (choice) => choice.question, { eager: true, cascade: true}) 
     choices: Choice[];
     
     grade(rawValue: string): number {

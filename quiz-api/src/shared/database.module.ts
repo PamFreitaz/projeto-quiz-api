@@ -17,6 +17,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
           encrypt: false, // instância local, sem TLS
           trustServerCertificate: true,
         },
+        autoLoadEntities: true,
         synchronize: false, //para o typeORM não fazer mudanças no banco sozinho
         logging: true,
         migrations: ['dist/migrations/*.js'],

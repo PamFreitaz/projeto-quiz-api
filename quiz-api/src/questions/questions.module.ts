@@ -16,5 +16,6 @@ import { MultipleChoiceQuestion } from './entities/multiple-choice-question.enti
     ],
     controllers: [QuestionsController],
     providers: [QuestionsService],
+    exports: [QuestionsService],
 })
 export class QuestionsModule {}

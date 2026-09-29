@@ -31,6 +31,10 @@ export class QuestionsService {
         return this.questionsRepository.find();
     }
 
+    findById(id: string): Promise<Question | null> {
+        return this.questionsRepository.findOneBy({ id: id });
+    }
+
     createEssay(dto: CreateEssayQuestionDto): Promise<EssayQuestion> {
         const question = this.essayRepository.create(dto);
         return this.essayRepository.save(question);

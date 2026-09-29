@@ -35,7 +35,7 @@ export class Attempt {
   scorePoints: number | null = null;
 
   @OneToMany(() => Answer, (answer) => answer.attempt, { eager: true })
-  answers: Answer[] = [];
+  answers: Answer[];
 
   //Marca como enviada. Lança se já estiver enviada
   submit(at: Date): void {

@@ -37,7 +37,7 @@ export class Attempt {
   @OneToMany(() => Answer, (answer) => answer.attempt, { eager: true })
   answers: Answer[];
 
-  //Marca como enviada. Lança se já estiver enviada
+  //Um método para marcaa o submittedAt como enviada. Lança se já estiver enviada
   submit(at: Date): void {
     if (this.submittedAt !== null) {
       throw new Error('Esta tentativa já foi enviada!');
@@ -63,7 +63,7 @@ export class Attempt {
     }
   }
 
-  //Soma apenas as respostas com `gradedAt` preenchido
+  //Método para scorePoints somar apenas as respostas com `gradedAt` preenchido
   recalculateScore(): void {
     let total = 0;
 

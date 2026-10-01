@@ -1,12 +1,17 @@
 import { Column, Entity, PrimaryGeneratedColumn, TableInheritance } from "typeorm";
 
 @Entity('questions')
-// STI: as 3 subclasses dividem esta tabela, question_type diz qual é cada linha
+// STI (herança em tabela única): as 3 subclasses dividem esta tabela, question_type diz qual é cada linha
 @TableInheritance({ column: { type: 'nvarchar', name: 'question_type' } })
 export abstract class Question {
 
     @PrimaryGeneratedColumn('uuid')
     id: string;
+
+    // mesmo nome do @TableInheritance, assim o TypeORM coloca o tipo da questão no objeto
+    //se for questionType o ORM não entende que é sobre essa etiqueta
+    @Column({ type: 'nvarchar' , length: 30, name: 'question_type'})
+    question_type: string;
     
     @Column({ type: 'nvarchar', length: 'MAX' })
     statement: string;

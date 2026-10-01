@@ -6,6 +6,10 @@ import { StartAttemptDto } from "../dto/start-attempt.dto";
 import { QuestionsService } from "../../questions/services/questions.service";
 import { SaveAnswerDto } from "../dto/save-answer.dto";
 import { Answer } from "../entities/answer.entity";
+import { AutoGradeResults } from "../auto-grade-results";
+import { MultipleChoiceQuestion } from "../../questions/entities/multiple-choice-question.entity";
+import { NumericQuestion } from "../../questions/entities/numeric-question.entity";
+import { throws } from "assert";
 
 @Injectable()
 export class AttemptsService {
@@ -27,6 +31,18 @@ export class AttemptsService {
 
     list(): Promise<Attempt[]> {
         return this.repositoryAttempt.find();
+    }
+
+    async listById(id: string): Promise<Attempt> {
+        const attempt = await this.repositoryAttempt.findOne({
+            where: { id: id},
+            relations: { answers: {question: true }},
+        });
+        
+        if(attempt === null) {
+            throw new NotFoundException('Tentativa não encontrada');
+        }
+        return attempt;
     }
 
     async saveAnswer(attemptId: string, dto: SaveAnswerDto): Promise<Attempt> {
@@ -69,6 +85,62 @@ export class AttemptsService {
             relations: { answers: { question: true}},
         });
     }
+
+    async submit(attemptId: string): Promise<Attempt> {
+        const attempt = await this.repositoryAttempt.findOne({
+            where: { id: attemptId},
+            relations: { answers: { question: true }},
+        });
+        if(attempt === null) {
+            throw new NotFoundException('Tentativa não encontrada');
+        }
+        if(!attempt.canAcceptAnswers()) {
+           throw new BadRequestException('Esta tentativa já foi enviada!'); 
+        }
+
+        const now = new Date();
+        attempt.submit(now);
+
+        const results: AutoGradeResults[] = [];
+        
+        for(const answer of attempt.answers) {
+            const question = answer.question;
+            let fraction: number | null = null;
+
+            switch(question.question_type) {
+                case 'multiple_choice':
+                    fraction = (question as MultipleChoiceQuestion).grade(answer.rawValue);
+                    break;
+                case 'numeric':
+                    fraction = (question as NumericQuestion).grade(answer.rawValue);
+                    break;
+                case 'essay':
+                    fraction = null;
+                    break;                    
+            }
+            if(fraction !== null) {
+                const points = Math.round(fraction * question.weightPoints * 100) / 100;
+                results.push({ answerId: answer.id, points: points});
+            }
+
+        }
+
+         // a tentativa preenche os pontos e a data em cada resposta auto corrigida 
+        attempt.applyAutoGrade(results, now);
+
+         // a tentativa soma os pontos e preenche recalculando a própria nota
+        attempt.recalculateScore();
+
+        //grava todas as respostas de uma vez fazendo um UPDATE para cada uma, e espera terminar
+        await this.repositoryAnswer.save(attempt.answers);
+
+        //grava a tentativa um UPDATE com o submitted_at e o score_points, e devolve ela
+        return this.repositoryAttempt.save(attempt);
+
+
+
+    }
+    
 
 
 }

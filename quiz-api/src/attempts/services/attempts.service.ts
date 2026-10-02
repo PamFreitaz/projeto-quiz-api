@@ -9,7 +9,7 @@ import { Answer } from "../entities/answer.entity";
 import { AutoGradeResults } from "../auto-grade-results";
 import { MultipleChoiceQuestion } from "../../questions/entities/multiple-choice-question.entity";
 import { NumericQuestion } from "../../questions/entities/numeric-question.entity";
-import { throws } from "assert";
+import { GradeAnswerDto } from "../dto/grade-answer.dto";
 
 @Injectable()
 export class AttemptsService {
@@ -136,10 +136,48 @@ export class AttemptsService {
 
         //grava a tentativa um UPDATE com o submitted_at e o score_points, e devolve ela
         return this.repositoryAttempt.save(attempt);
-
-
-
     }
+
+    async gradeAnswer(answerId: string, dto: GradeAnswerDto): Promise<Attempt> {
+        const answer = await this.repositoryAnswer.findOne({
+            where: { id : answerId },
+            relations: { attempt: true, question: true },
+        });
+
+        if(answer === null ) {
+            throw new NotFoundException('Resposta não encontrada');
+        }
+
+        if(answer.attempt.canAcceptAnswers()) {
+            throw new BadRequestException('Tentativa ainda não foi enviada, só dá para corrigir depois do envio!');
+        }
+
+        if(answer.question.question_type !== 'essay' ) {
+            throw new BadRequestException('Somente respostas dissertativas são corrigidas manualmente!');
+        }
+
+        if(dto.points > answer.question.weightPoints) {
+            throw new BadRequestException('A pontuação não pode ser maior do que o peso da questão!');
+        }
+        
+        answer.awardedPoints = dto.points;
+        answer.gradedAt = new Date();
+        await this.repositoryAnswer.save(answer);
+
+        // busca a tentativa de novo já com a resposta corrigida
+        const attempt = await this.repositoryAttempt.findOneOrFail({
+            where: { id: answer.attempt.id},
+            relations: { answers: { question: true} },
+        });
+
+        //recalcula a nota da tentativa
+        attempt.recalculateScore();
+
+        //salva no banco a tentativa com a nota nova
+        return this.repositoryAttempt.save(attempt);
+        
+    }
+    
     
 
 

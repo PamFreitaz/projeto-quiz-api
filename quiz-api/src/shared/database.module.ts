@@ -16,6 +16,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         options: {
           encrypt: false, // instância local, sem TLS
           trustServerCertificate: true,
+          useUTC: true, // lê e grava as datas em UTC, igual ao SYSUTCDATETIME() do banco
         },
         autoLoadEntities: true,
         synchronize: false, //para o typeORM não fazer mudanças no banco sozinho

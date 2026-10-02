@@ -11,6 +11,7 @@ export default new DataSource({
   options: {
     encrypt: false, // instância local, sem TLS
     trustServerCertificate: true,
+    useUTC: true, // lê e grava as datas em UTC, igual ao SYSUTCDATETIME() do banco
   },
   synchronize: false,
   logging: true,

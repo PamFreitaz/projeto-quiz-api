@@ -1,6 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Answer } from './answer.entity';
 import { AutoGradeResults } from '../auto-grade-results';
+import { ScoreCalculator } from '../../grading/score-calculator';
 
 @Entity('attempts')
 export class Attempt {
@@ -63,16 +64,16 @@ export class Attempt {
     }
   }
 
-  //Método para scorePoints somar apenas as respostas com `gradedAt` preenchido
-  recalculateScore(): void {
-    let total = 0;
-
-    for (const answer of this.answers) {
+  //método refatorado
+  recalculateScore(calculator: ScoreCalculator): void {
+    const points: number[] = [];
+    
+    for( const answer of this.answers) {
       if(answer.gradedAt !== null && answer.awardedPoints !== null) {
-        total = total + answer.awardedPoints;
+        points.push(answer.awardedPoints);
       }
     }
-    this.scorePoints = total
+    this.scorePoints = calculator.total(points);
   }
 
   //Responde se ainda aceita resposta

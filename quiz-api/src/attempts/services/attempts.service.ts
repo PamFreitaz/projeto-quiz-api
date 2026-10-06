@@ -6,11 +6,9 @@ import { StartAttemptDto } from "../dto/start-attempt.dto";
 import { QuestionsService } from "../../questions/services/questions.service";
 import { SaveAnswerDto } from "../dto/save-answer.dto";
 import { Answer } from "../entities/answer.entity";
-import { AutoGradeResults } from "../auto-grade-results";
-import { MultipleChoiceQuestion } from "../../questions/entities/multiple-choice-question.entity";
-import { NumericQuestion } from "../../questions/entities/numeric-question.entity";
 import { GradeAnswerDto } from "../dto/grade-answer.dto";
 import { ScoreCalculator } from "../../grading/score-calculator";
+import { GradingService } from "../../grading/grading.service";
 
 @Injectable()
 export class AttemptsService {
@@ -25,6 +23,8 @@ export class AttemptsService {
         private readonly questionsService: QuestionsService,
 
         private readonly scoreCalculator: ScoreCalculator,
+
+        private readonly gradingService: GradingService,
     ) {}
 
     start(dto: StartAttemptDto): Promise<Attempt> {
@@ -104,29 +104,7 @@ export class AttemptsService {
         const now = new Date();
         attempt.submit(now);
 
-        const results: AutoGradeResults[] = [];
-        
-        for(const answer of attempt.answers) {
-            const question = answer.question;
-            let fraction: number | null = null;
-
-            switch(question.question_type) {
-                case 'multiple_choice':
-                    fraction = (question as MultipleChoiceQuestion).grade(answer.rawValue);
-                    break;
-                case 'numeric':
-                    fraction = (question as NumericQuestion).grade(answer.rawValue);
-                    break;
-                case 'essay':
-                    fraction = null;
-                    break;                    
-            }
-            if(fraction !== null) {
-                const points = this.scoreCalculator.pointsFor(fraction, question.weightPoints);
-                results.push({ answerId: answer.id, points: points});
-            }
-
-        }
+       const results = this.gradingService.autoGrade(attempt.answers)
 
          // a tentativa preenche os pontos e a data em cada resposta auto corrigida 
         attempt.applyAutoGrade(results, now);

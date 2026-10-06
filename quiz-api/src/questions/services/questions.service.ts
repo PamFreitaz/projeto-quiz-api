@@ -9,6 +9,9 @@ import { CreateQuestionDto } from "../dto/create-question.dto";
 import { CreateNumericQuestionDto } from "../dto/create-numeric-question.dto";
 import { CreateMultipleChoiceQuestionDto } from "../dto/create-multiple-choice-question.dto";
 import { MultipleChoiceQuestion } from "../entities/multiple-choice-question.entity";
+import { TrueFalseQuestion } from "../entities/true-false-question.entity";
+import { CreateTrueFalseQuestionDto } from "../dto/create-true-false-question.dto";
+import { Choice } from "../entities/choice.entity";
 
 @Injectable()
 export class QuestionsService {
@@ -25,6 +28,12 @@ export class QuestionsService {
 
         @InjectRepository(MultipleChoiceQuestion)
         private readonly multipleChoiceRepository: Repository<MultipleChoiceQuestion>,
+
+        @InjectRepository(TrueFalseQuestion)
+        private readonly trueFalseRepository: Repository<TrueFalseQuestion>,
+
+        @InjectRepository(Choice)
+        private readonly choiceRepository: Repository<Choice>,
     ) {}
 
     list(): Promise<Question[]> {
@@ -48,5 +57,20 @@ export class QuestionsService {
     createMultipleChoice(dto: CreateMultipleChoiceQuestionDto): Promise<MultipleChoiceQuestion> {
         const question = this.multipleChoiceRepository.create(dto);
         return this.multipleChoiceRepository.save(question);
+    }
+
+    async createTrueFalse(dto: CreateTrueFalseQuestionDto): Promise<TrueFalseQuestion> {
+        const question = this.trueFalseRepository.create({statement: dto.statement, weightPoints: dto.weightPoints});
+        const savedQuestion = await this.trueFalseRepository.save(question);
+
+        const choices = this.choiceRepository.create([
+            { text: 'Verdadeiro', isCorrect: dto.correctAnswer, question: savedQuestion },
+            { text: 'Falso', isCorrect: !dto.correctAnswer, question: savedQuestion }
+        ]);
+        await this.choiceRepository.save(choices);
+
+        return this.trueFalseRepository.findOneOrFail({
+            where: {id: savedQuestion.id}
+        });
     }
 }

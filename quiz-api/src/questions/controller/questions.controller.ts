@@ -8,6 +8,8 @@ import { NumericQuestion } from "../entities/numeric-question.entity";
 import { CreateMultipleChoiceQuestionDto } from "../dto/create-multiple-choice-question.dto";
 import { MultipleChoiceQuestion } from "../entities/multiple-choice-question.entity";
 import { ApiOperation } from "@nestjs/swagger";
+import { CreateTrueFalseQuestionDto } from "../dto/create-true-false-question.dto";
+import { TrueFalseQuestion } from "../entities/true-false-question.entity";
 
 @Controller('questions')
 export class QuestionsController {
@@ -38,7 +40,11 @@ export class QuestionsController {
         return this.questionsService.createMultipleChoice(dtoMultipleChoice);
     }
 
-
+    @ApiOperation({ summary: 'Cadastra uma questão de verdadeiro ou falso'})
+    @Post('true-false')
+    createTrueFalse(@Body() dtoTrueFalse: CreateTrueFalseQuestionDto): Promise<TrueFalseQuestion> {
+        return this.questionsService.createTrueFalse(dtoTrueFalse);
+    }
 
         
 }

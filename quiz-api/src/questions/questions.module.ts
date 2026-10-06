@@ -9,10 +9,18 @@ import { QuestionsService } from './services/questions.service';
 import { QuestionsController } from './controller/questions.controller';
 import { Choice } from './entities/choice.entity';
 import { MultipleChoiceQuestion } from './entities/multiple-choice-question.entity';
+import { TrueFalseQuestion } from './entities/true-false-question.entity';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([Question, EssayQuestion, NumericQuestion, MultipleChoiceQuestion, Choice]),
+        TypeOrmModule.forFeature([
+            Question, 
+            EssayQuestion, 
+            NumericQuestion, 
+            MultipleChoiceQuestion, 
+            Choice,
+            TrueFalseQuestion,
+        ]),
     ],
     controllers: [QuestionsController],
     providers: [QuestionsService],

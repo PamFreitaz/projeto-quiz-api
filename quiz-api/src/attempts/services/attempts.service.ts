@@ -9,6 +9,7 @@ import { Answer } from "../entities/answer.entity";
 import { GradeAnswerDto } from "../dto/grade-answer.dto";
 import { ScoreCalculator } from "../../grading/score-calculator";
 import { GradingService } from "../../grading/grading.service";
+import { isAutoGradable } from "../../questions/auto-gradable";
 
 @Injectable()
 export class AttemptsService {
@@ -133,8 +134,8 @@ export class AttemptsService {
             throw new BadRequestException('Tentativa ainda não foi enviada, só dá para corrigir depois do envio!');
         }
 
-        if(answer.question.question_type !== 'essay' ) {
-            throw new BadRequestException('Somente respostas dissertativas são corrigidas manualmente!');
+        if(isAutoGradable(answer.question) ) {
+            throw new BadRequestException('Essa questão é corrigida automaticamente. Só as questões que não se corrigem sozinhas vão para a correção manual!');
         }
 
         if(dto.points > answer.question.weightPoints) {

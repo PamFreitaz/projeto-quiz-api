@@ -28,4 +28,7 @@ export abstract class Question {
     @Column({ type: 'datetime2', insert: false, update: false, name: 'created_at' })
     createdAt: Date;
 
+    //etapa 4.3, fazer errado de propósito para testar e ver na prática como acontece
+    abstract grade(rawValue: string): number;
+
 }

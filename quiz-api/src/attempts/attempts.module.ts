@@ -7,6 +7,8 @@ import { AttemptsController } from './controller/attempts.controller';
 import { AttemptsService } from './services/attempts.service';
 import { AnswersController } from './controller/answers.controller';
 import { GradingModule } from '../grading/grading.module';
+import { ATTEMPT_REPOSITORY } from './repositories/attempt.repository';
+import { TypeOrmAttemptRepository } from './repositories/typeorm-attempt.repository';
 
 @Module({
   imports: [
@@ -14,7 +16,9 @@ import { GradingModule } from '../grading/grading.module';
     QuestionsModule, GradingModule,
   ],
   controllers: [AttemptsController, AnswersController],
-  providers: [AttemptsService],
+  providers: [AttemptsService,
+    //quem pedir o ATTEMPT_REPOSITORY recebe a classe do TypeOrmAttemptRepository
+    { provide: ATTEMPT_REPOSITORY, useClass: TypeOrmAttemptRepository}],
   //exports: []
 })
 export class AttemptsModule {}

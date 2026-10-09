@@ -1,12 +1,13 @@
 import { Injectable } from "@nestjs/common";
-import { AttemptRepository } from "./attempt.repository";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Attempt } from "../entities/attempt.entity";
 import { Answer } from "../entities/answer.entity";
 import { Repository } from "typeorm";
+import { AttemptReaderRepository } from "./attempt-reader.repository";
+import { AttemptWriterRepository } from "./attempt-writer.repository";
 
 @Injectable()
-export class TypeOrmAttemptRepository extends AttemptRepository {
+export class TypeOrmAttemptRepository implements AttemptReaderRepository, AttemptWriterRepository {
 
     constructor(
 
@@ -17,9 +18,7 @@ export class TypeOrmAttemptRepository extends AttemptRepository {
         @InjectRepository(Answer)
         private readonly answers: Repository<Answer>,
         
-    ) {
-        super(); //super pq a classe filha tem o seu próprio construtor
-    }
+    ) { }
 
     findAll(): Promise<Attempt[]> {
         return this.attempts.find();

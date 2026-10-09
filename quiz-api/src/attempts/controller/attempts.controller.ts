@@ -4,22 +4,29 @@ import { StartAttemptDto } from "../dto/start-attempt.dto";
 import { Attempt } from "../entities/attempt.entity";
 import { SaveAnswerDto } from "../dto/save-answer.dto";
 import { ApiOperation } from "@nestjs/swagger";
+import { AttemptQueryService } from "../services/attempt-query.service";
 
 @Controller('attempts')
 export class AttemptsController {
 
-    constructor(private readonly attemptsService: AttemptsService) {}
+    constructor(
+        
+        private readonly attemptsService: AttemptsService,
+        
+        private readonly attemptQueryService: AttemptQueryService
+
+    ) {}
 
     @ApiOperation({ summary: 'Lista as tentativas' })
     @Get()
     list(): Promise<Attempt[]> {
-        return this.attemptsService.list();
+        return this.attemptQueryService.list();
     }
 
     @ApiOperation({ summary: 'Lista as tentativas por id'})
     @Get(':id')
     listById(@Param('id') id: string): Promise<Attempt> {
-        return this.attemptsService.listById(id);
+        return this.attemptQueryService.listById(id);
     }
     
     @ApiOperation({ summary: 'Inicia uma tentativa' })

@@ -20,7 +20,7 @@ describe('AttemptsService (sem banco)', () => {
         repository = new InMemoryAttemptRepository();
         const calculator = new ScoreCalculator();
         // o submit e o gradeAnswer não usam o QuestionsService, então vai uma caixa vazia
-        service = new AttemptsService(repository, {} as QuestionsService, calculator, new GradingService(calculator));
+        service = new AttemptsService(repository, repository, {} as QuestionsService, calculator, new GradingService(calculator));
     });
 
     // função de ajuda: uma tentativa com uma numérica certa com o peso 2 e uma dissertativa peso 3

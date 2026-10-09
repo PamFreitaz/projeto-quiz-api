@@ -1,7 +1,8 @@
 import { Attempt } from "../entities/attempt.entity";
-import { AttemptRepository } from "./attempt.repository";
+import { AttemptReaderRepository } from "./attempt-reader.repository";
+import { AttemptWriterRepository } from "./attempt-writer.repository";
 
-export class InMemoryAttemptRepository extends AttemptRepository {
+export class InMemoryAttemptRepository implements AttemptReaderRepository, AttemptWriterRepository {
 
     private readonly items: Attempt[] = [];
     private nextId = 1;

@@ -8,14 +8,19 @@ import { GradeAnswerDto } from "../dto/grade-answer.dto";
 import { ScoreCalculator } from "../../grading/score-calculator";
 import { GradingService } from "../../grading/grading.service";
 import { isAutoGradable } from "../../questions/auto-gradable";
-import { ATTEMPT_REPOSITORY, AttemptRepository } from "../repositories/attempt.repository";
+import { ATTEMPT_READER_REPOSITORY, AttemptReaderRepository } from "../repositories/attempt-reader.repository";
+import { ATTEMPT_WRITER_REPOSITORY, AttemptWriterRepository } from "../repositories/attempt-writer.repository";
 
 @Injectable()
 export class AttemptsService {
 
     constructor(
-        @Inject(ATTEMPT_REPOSITORY)
-        private readonly attemptRepository: AttemptRepository,
+
+        @Inject(ATTEMPT_READER_REPOSITORY)
+        private readonly attemptReaderRepository: AttemptReaderRepository,
+
+        @Inject(ATTEMPT_WRITER_REPOSITORY)
+        private readonly attemptWriterRepository: AttemptWriterRepository,
 
         private readonly questionsService: QuestionsService,
 
@@ -28,24 +33,11 @@ export class AttemptsService {
         const attempt = new Attempt();
         attempt.studentName = dto.studentName;
         attempt.answers = [];
-        return this.attemptRepository.save(attempt);
-    }
-
-    list(): Promise<Attempt[]> {
-        return this.attemptRepository.findAll();
-    }
-
-    async listById(id: string): Promise<Attempt> {
-        const attempt = await this.attemptRepository.findById(id);
-        
-        if(attempt === null) {
-            throw new NotFoundException('Tentativa não encontrada');
-        }
-        return attempt;
+        return this.attemptWriterRepository.save(attempt);
     }
 
     async saveAnswer(attemptId: string, dto: SaveAnswerDto): Promise<Attempt> {
-        const attempt = await this.attemptRepository.findById(attemptId);
+        const attempt = await this.attemptReaderRepository.findById(attemptId);
 
         if (attempt === null) {
             throw new NotFoundException('Tentativa não encontrada!');
@@ -71,11 +63,11 @@ export class AttemptsService {
             newAnswer.question = question;
             attempt.answers.push(newAnswer);
         }
-        return this.attemptRepository.save(attempt);
+        return this.attemptWriterRepository.save(attempt);
     }
 
     async submit(attemptId: string): Promise<Attempt> {
-        const attempt = await this.attemptRepository.findById(attemptId);
+        const attempt = await this.attemptReaderRepository.findById(attemptId);
         if(attempt === null) {
             throw new NotFoundException('Tentativa não encontrada');
         }
@@ -94,12 +86,12 @@ export class AttemptsService {
          // a tentativa soma os pontos e preenche usando a calculadora
         attempt.recalculateScore(this.scoreCalculator);
 
-        return this.attemptRepository.save(attempt);
+        return this.attemptWriterRepository.save(attempt);
     }
 
     //aqui é para o professor corrigir a dissertativa
     async gradeAnswer(answerId: string, dto: GradeAnswerDto): Promise<Attempt> {
-        const attempt = await this.attemptRepository.findByAnswerId(answerId);
+        const attempt = await this.attemptReaderRepository.findByAnswerId(answerId);
         
         if(attempt === null ) {
             throw new NotFoundException('Resposta não encontrada');
@@ -130,7 +122,7 @@ export class AttemptsService {
         attempt.recalculateScore(this.scoreCalculator);
 
         //salva no banco com a nota nova
-        return this.attemptRepository.save(attempt);
+        return this.attemptWriterRepository.save(attempt);
     }
     
     

@@ -21,3 +21,7 @@ Vou rever depois da Etapa 4.1.
 ## Etapa 4.3 — Por que a solução do LSP passou pelo ISP?
 
 - Quando o grade estava na classe mãe (question) toda classe que herdava era obrigada a ter o método grade. Então a essay (dissertativa) teve que criar o método só para lançar um erro, e o GradingService teve que fazer o try catch para não travar o sistema. Mas o try catch não resolve o problema pq não dá erro no sistema mas tbm não diz onde está tendo um erro, então assim não aparecem os pontos e não quando foi enviada a questão. Então o correto foi mudar no contrato, na interface, fazendo assim com que só quem sabe se corrigir automático assina. Separar uma promessa grande em promessas menores é o ISP. Por isso a solução do LSP passou pelo ISP, pq o problema era a mãe prometer coisa demais.
+
+## Etapa 4.4 — Por que o token `Symbol` foi necessário?
+
+Comparando o pq usar o token Symbol com classe abstrata. O computador não roda typescript, ele só roda javascript, sendo assim quando o typescript vira javascript, a interface some. E o Nest faz a injeção no javascript com o aplicativo rodando, então se a abstração tivesse sido escrita como interface ele não teria nada para usar na hora de entregar. Usando o token Symbol eu tenho um "nome" na hora da entrega, que continua existindo no javascript. A classe abstrata não desaparece, ela continua aparecendo no DIST, então poderia usar ela ao invés de usar o Symbol. Mas o guia pede pra usar Symbol e por isso usei.

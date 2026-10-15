@@ -59,7 +59,7 @@ Comparando o pq usar o token Symbol com classe abstrata. O computador não roda 
 **AP12** — Sei explicar a diferença entre `providers`, `exports` e `imports` a partir do próprio código do projeto
 
 - Resposta:
-Consegue receber pq ele está no questionModule em providers e deixa os outros módulos usarem se forem exportados. E por outro lado o AttemptModule acrescenta o QuestionModule no imports
+Consegue receber pq ele está no questionModule em providers e deixa os outros módulos usarem se forem exportados. E por outro lado o AttemptsModule acrescenta o QuestionsModule no imports
 
 **AP15** — Sei explicar por que `NOT IN` com subquery que retorna `NULL` devolve resultado vazio
 
@@ -79,4 +79,15 @@ Fiz o teste com a aluna Marta. Depois do empate no 7, ela ficou em 4º no ROW_NU
 - A que mais mudou foi a refatoração do AutoGradable. Antes precisava ter no service um método para precisar saber qual era o tipo de questão. Com a refatoração, cada questão sabe se corrigir e o service só pergunta se a questão sabe se corrigir (quem é AutoGradable). Com essa refatoração eu implementei mais um tipo de questão para verdadeiro e falso e só mexi em questions. 
 
 - Antes da refatoração quem precisava reconhecer os tipos da questão era a service, que tinha um switch dentro do método submit que reconhecia todos os tipos de questões. Depois da refatoração cada questão sabe se corrigir sozinha através do método grade.
+
+## Resumo de uma linha por princípio
+
+| Princípio | O que o projeto ensinou | Arquivo-testemunha |
+|---|---|---|
+| **SRP** | Separei ___o cálculo da nota que foi para uma classe própria, ScoreCalculator__ de ___AttemptsService____ porque mudam por motivos diferentes | `score-calculator.ts` |
+| **OCP** | Adicionei um tipo novo editando só ___a questions___| `questions/entities/` |
+| **LSP** | A dissertativa não podia ___se corrigir sozinha___, então movi o método para ___a interface AutoGradable___| `auto-gradable.ts` |
+| **ISP** | O consumidor de leitura passou a depender só de ___AttemptReaderRepository___| `attempt-reader.repository.ts` |
+| **DIP** | Meus testes rodam sem banco porque o serviço depende de ___abstração, das classes abstratas AttemptReaderRepository e AttemptWriterRepository___| `in-memory-attempt.repository.ts` |
+
 

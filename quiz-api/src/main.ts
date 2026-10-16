@@ -13,6 +13,11 @@ async function bootstrap() {
     }),
   );
 
+  //CORS para acessar o front 
+  app.enableCors({
+    origin: 'http://127.0.0.1:5500',
+  });
+
   const config = new DocumentBuilder()
     .setTitle('Quiz API')
     .setVersion('1.0')

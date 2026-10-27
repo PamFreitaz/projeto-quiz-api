@@ -1,0 +1,883 @@
+/* ---------- cores e medidas usadas no arquivo inteiro ---------- */
+
+:root {
+    --primary: #4f46e5;
+    --primary-dark: #4338ca;
+    --primary-soft: #eef2ff;
+    --text: #1f2937;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --background: #f3f4f6;
+    --card: #ffffff;
+    --success: #15803d;
+    --success-soft: #dcfce7;
+    --warning: #b45309;
+    --warning-soft: #fef3c7;
+    --danger: #b91c1c;
+    --danger-soft: #fee2e2;
+    --radius: 12px;
+    --log-height: 46px;
+}
+
+/* ---------- base ---------- */
+
+* {
+    box-sizing: border-box;
+}
+
+/* o atributo hidden precisa vencer qualquer display definido mais abaixo, senão a tela escondida continua aparecendo */
+[hidden] {
+    display: none !important;
+}
+
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    color: var(--text);
+    background: var(--background);
+    line-height: 1.5;
+}
+
+h1, h2, h3 {
+    margin: 0;
+    line-height: 1.25;
+}
+
+h2 {
+    font-size: 1.35rem;
+}
+
+h3 {
+    font-size: 1.05rem;
+    margin: 10px 0 14px;
+}
+
+/* o espaço de baixo deixa o fim da página livre do painel de chamadas, que fica fixo no rodapé */
+main {
+    max-width: 880px;
+    margin: 24px auto;
+    padding: 0 20px calc(var(--log-height) + 40px);
+}
+
+.hint {
+    color: var(--muted);
+    margin: 6px 0 0;
+}
+
+.hint.error {
+    color: var(--danger);
+}
+
+.center {
+    text-align: center;
+    margin-top: 24px;
+}
+
+.right {
+    text-align: right;
+}
+
+/* ---------- topo e menu ---------- */
+
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+}
+
+.topbar-inner {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.logo {
+    font-size: 1.4rem;
+    color: var(--primary);
+}
+
+.api-status {
+    font-size: 0.85rem;
+    color: var(--muted);
+}
+
+.api-status::before {
+    content: "● ";
+}
+
+.api-status.online::before {
+    color: var(--success);
+}
+
+.api-status.offline {
+    color: var(--danger);
+}
+
+.docs-link {
+    font-size: 0.85rem;
+    color: var(--muted);
+    text-decoration: none;
+}
+
+.docs-link:hover {
+    color: var(--primary);
+    text-decoration: underline;
+}
+
+nav {
+    display: flex;
+    gap: 4px;
+    margin-left: auto;
+}
+
+.nav-button {
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-weight: 600;
+}
+
+.nav-button:hover {
+    background: var(--background);
+}
+
+.nav-button.active {
+    background: var(--primary-soft);
+    color: var(--primary);
+}
+
+/* ---------- cartões ---------- */
+
+.card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+/* ---------- campos e botões ---------- */
+
+label {
+    display: block;
+    font-weight: 600;
+    margin: 16px 0 6px;
+}
+
+input[type="text"],
+textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font: inherit;
+    color: inherit;
+    background: #fff;
+}
+
+input[type="text"]:focus,
+textarea:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: 1px;
+    border-color: transparent;
+}
+
+textarea {
+    resize: vertical;
+}
+
+button {
+    font: inherit;
+    cursor: pointer;
+    padding: 10px 18px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--card);
+    color: var(--text);
+}
+
+button:hover {
+    background: #f9fafb;
+}
+
+button.primary {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+    font-weight: 600;
+}
+
+button.primary:hover {
+    background: var(--primary-dark);
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+button.small {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+}
+
+button.full {
+    width: 100%;
+    margin-top: 16px;
+}
+
+/* ---------- mensagens ---------- */
+
+.message {
+    margin: 8px 0 0;
+    min-height: 1.5em;
+    color: var(--muted);
+}
+
+.message:empty {
+    min-height: 0;
+    margin: 0;
+}
+
+.message.error {
+    color: var(--danger);
+}
+
+.message.success {
+    color: var(--success);
+}
+
+.notice {
+    margin: 12px 0 0;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: var(--warning-soft);
+    color: var(--warning);
+}
+
+.notice.success {
+    background: var(--success-soft);
+    color: var(--success);
+}
+
+/* ---------- tela 1: início ---------- */
+
+.start-card {
+    max-width: 440px;
+    margin: 48px auto;
+    padding: 32px;
+}
+
+/* ---------- área do aluno: minhas provas ---------- */
+
+.home-action {
+    margin-top: 16px;
+}
+
+/* ---------- tela 2: prova ---------- */
+
+.question-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--primary-soft);
+    color: var(--primary);
+}
+
+.badge-true_false {
+    background: #e0f2fe;
+    color: #0369a1;
+}
+
+.badge-numeric {
+    background: #fce7f3;
+    color: #be185d;
+}
+
+.badge-essay {
+    background: var(--warning-soft);
+    color: var(--warning);
+}
+
+.weight {
+    font-size: 0.85rem;
+    color: var(--muted);
+}
+
+.choices {
+    display: grid;
+    gap: 8px;
+}
+
+.choice {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-weight: 400;
+    cursor: pointer;
+}
+
+.choice:hover {
+    border-color: var(--primary);
+}
+
+/* a alternativa marcada fica destacada */
+.choice:has(input:checked) {
+    border-color: var(--primary);
+    background: var(--primary-soft);
+}
+
+.choice input {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: var(--primary);
+}
+
+.save-status {
+    margin: 8px 0 0;
+    min-height: 1.4em;
+    font-size: 0.85rem;
+    color: var(--muted);
+}
+
+.save-status.saved {
+    color: var(--success);
+}
+
+.save-status.error {
+    color: var(--danger);
+}
+
+/* a barra de envio acompanha a rolagem, fica sempre à vista no rodapé */
+.submit-bar {
+    position: sticky;
+    bottom: calc(var(--log-height) + 12px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* ---------- tela 3: resultado ---------- */
+
+.score-card {
+    text-align: center;
+    padding: 32px;
+}
+
+.score-value {
+    margin: 4px 0 0;
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--primary);
+}
+
+.score-max {
+    margin: 4px 0 0;
+    color: var(--muted);
+}
+
+.your-answer {
+    margin: 0 0 10px;
+}
+
+.correct-answer {
+    margin: -4px 0 10px;
+    color: var(--success);
+}
+
+.verdict {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.verdict-right {
+    background: var(--success-soft);
+    color: var(--success);
+}
+
+.verdict-partial,
+.verdict-pending {
+    background: var(--warning-soft);
+    color: var(--warning);
+}
+
+.verdict-wrong {
+    background: var(--danger-soft);
+    color: var(--danger);
+}
+
+.verdict-none,
+.verdict-auto {
+    background: var(--background);
+    color: var(--muted);
+}
+
+/* ---------- tela 4: professor ---------- */
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 10px 8px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+}
+
+th {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+}
+
+tr.selected {
+    background: var(--primary-soft);
+}
+
+.status {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.status-open {
+    background: #e0f2fe;
+    color: #0369a1;
+}
+
+.status-pending {
+    background: var(--warning-soft);
+    color: var(--warning);
+}
+
+.status-done {
+    background: var(--success-soft);
+    color: var(--success);
+}
+
+.detail-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.detail-top h2 {
+    margin-bottom: 6px;
+}
+
+.detail-score {
+    text-align: right;
+}
+
+.detail-score-value {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--primary);
+}
+
+.grade-form {
+    display: flex;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.grade-form label {
+    width: 100%;
+    margin: 0;
+}
+
+.grade-form input {
+    width: 120px;
+}
+
+/* abas Correções / Questões */
+.tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+}
+
+.tab {
+    border: none;
+    border-bottom: 3px solid transparent;
+    border-radius: 0;
+    background: transparent;
+    color: var(--muted);
+    font-weight: 600;
+}
+
+.tab:hover {
+    background: transparent;
+    color: var(--text);
+}
+
+.tab.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+}
+
+/* o número de provas esperando correção, ao lado do nome da aba */
+.count {
+    display: inline-block;
+    min-width: 22px;
+    margin-left: 4px;
+    padding: 0 7px;
+    border-radius: 999px;
+    background: var(--warning);
+    color: #fff;
+    font-size: 0.8rem;
+    line-height: 22px;
+    text-align: center;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+/* caixinha de marcar na mesma linha do texto (o label normal fica numa linha só dele) */
+.inline-check {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    font-weight: 400;
+    font-size: 0.9rem;
+    color: var(--muted);
+    cursor: pointer;
+}
+
+.inline-check input {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    accent-color: var(--primary);
+}
+
+/* formulário de nova questão */
+.type-picker {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+
+.two-columns {
+    grid-template-columns: 1fr 1fr;
+}
+
+.short-field {
+    max-width: 160px;
+}
+
+.label-hint {
+    font-weight: 400;
+    color: var(--muted);
+}
+
+.choice-rows {
+    display: grid;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.choice-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.choice-row input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    flex-shrink: 0;
+    accent-color: var(--success);
+}
+
+.field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+/* ---------- método e status HTTP (usados nas regras e no painel de chamadas) ---------- */
+
+code {
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 0.85em;
+    background: var(--background);
+    padding: 1px 6px;
+    border-radius: 4px;
+}
+
+.method {
+    display: inline-block;
+    min-width: 52px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-align: center;
+    color: #fff;
+}
+
+.method-get { background: #2563eb; }
+.method-post { background: #16a34a; }
+.method-put { background: #d97706; }
+.method-patch { background: #7c3aed; }
+
+.http-status {
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 4px;
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.http-status.s2xx { background: var(--success-soft); color: var(--success); }
+.http-status.s4xx { background: var(--warning-soft); color: var(--warning); }
+.http-status.s5xx { background: var(--danger-soft); color: var(--danger); }
+
+/* ---------- regras da API ---------- */
+
+.rules-group {
+    margin: 28px 0 12px;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+}
+
+.rule-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.rule-top h3 {
+    margin: 0;
+}
+
+.rule-uses {
+    margin: 10px 0 0;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: var(--primary-soft);
+}
+
+.rule-meta {
+    margin: 8px 0 0;
+    font-size: 0.85rem;
+    color: var(--muted);
+}
+
+.rule-result {
+    margin-top: 12px;
+}
+
+.rule-result:empty {
+    margin-top: 0;
+}
+
+.rule-answer {
+    margin-left: 8px;
+}
+
+.rule-verdict {
+    margin: 8px 0 0;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.rule-verdict.ok {
+    color: var(--success);
+}
+
+.rule-verdict.warn {
+    color: var(--danger);
+}
+
+.rule-when {
+    margin: 4px 0 0;
+    font-size: 0.8rem;
+    color: var(--muted);
+}
+
+/* um fundo amarelo que some aos poucos, para marcar que o resultado acabou de chegar */
+.rule-result.flash {
+    animation: flash 1.2s ease-out;
+    border-radius: 8px;
+}
+
+@keyframes flash {
+    from {
+        background: var(--warning-soft);
+    }
+    to {
+        background: transparent;
+    }
+}
+
+/* ---------- painel de chamadas à API (fixo no rodapé) ---------- */
+
+.api-log {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 20;
+    background: #1f2937;
+    color: #e5e7eb;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.api-log-bar {
+    width: 100%;
+    height: var(--log-height);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 0 20px;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    color: inherit;
+    text-align: left;
+}
+
+.api-log-bar:hover {
+    background: #374151;
+}
+
+.api-log-title {
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.api-log-last {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    color: #9ca3af;
+}
+
+.api-log-arrow {
+    color: #9ca3af;
+}
+
+.api-log-list {
+    max-height: 240px;
+    overflow-y: auto;
+    margin: 0;
+    padding: 4px 20px 12px;
+    list-style: none;
+    border-top: 1px solid #374151;
+}
+
+.api-log-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 0;
+    border-bottom: 1px solid #374151;
+}
+
+.api-log code,
+.api-log-path {
+    background: transparent;
+    color: #e5e7eb;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.api-log-ms {
+    margin-left: auto;
+    color: #9ca3af;
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+
+/* ---------- telas pequenas ---------- */
+
+@media (max-width: 600px) {
+    nav {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .nav-button {
+        flex: 1;
+    }
+
+    .submit-bar,
+    .detail-top {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+    }
+
+    .detail-score {
+        text-align: center;
+    }
+
+    .type-picker,
+    .field-row {
+        grid-template-columns: 1fr 1fr;
+    }
+}

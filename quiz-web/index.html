@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="topbar">
+        <div class="topbar-inner">
+            <h1 class="logo">Quiz</h1>
+            <span id="api-status" class="api-status">Conectando à API...</span>
+            <a class="docs-link" href="http://localhost:3000/docs" target="_blank" rel="noopener">Swagger ↗</a>
+            <nav>
+                <button id="nav-student" class="nav-button active">Área do aluno</button>
+                <button id="nav-teacher" class="nav-button">Área do professor</button>
+                <button id="nav-rules" class="nav-button">Regras da API</button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Área do aluno, entrada: por enquanto é só o nome; quando tiver login, esta tela vira o login de verdade -->
+        <section id="login-screen">
+            <div class="card start-card">
+                <h2>Área do aluno</h2>
+                <p id="start-info" class="hint"></p>
+
+                <label for="student-name">Seu nome</label>
+                <input id="student-name" type="text" placeholder="Digite seu nome" maxlength="120" autocomplete="off">
+
+                <button id="login-button" class="primary full">Entrar</button>
+                <p id="login-message" class="message" aria-live="polite"></p>
+            </div>
+        </section>
+
+        <!-- Área do aluno, minhas provas: continuar a aberta, começar uma nova (POST /attempts) ou ver um resultado -->
+        <section id="student-home-screen" hidden>
+            <div class="card">
+                <div class="card-header">
+                    <h2>Olá, <span id="home-student"></span>!</h2>
+                    <button id="logout-button" class="small">Sair</button>
+                </div>
+
+                <p id="home-info" class="hint"></p>
+                <button id="main-action-button" class="primary home-action">Começar nova prova</button>
+                <p id="home-message" class="message" aria-live="polite"></p>
+            </div>
+
+            <div class="card">
+                <h2>Minhas provas</h2>
+                <div id="my-attempts"></div>
+            </div>
+        </section>
+
+        <!-- Tela 2: as questões (GET /questions), cada resposta é salva na hora (PUT /attempts/:id/answers) -->
+        <section id="quiz-screen" hidden>
+            <div class="card">
+                <h2>Prova de <span id="quiz-student"></span></h2>
+                <p id="quiz-info" class="hint"></p>
+            </div>
+
+            <div id="questions-list"></div>
+
+            <div class="card submit-bar">
+                <div>
+                    <strong id="quiz-progress"></strong>
+                    <p id="quiz-message" class="message" aria-live="polite"></p>
+                </div>
+                <button id="submit-button" class="primary">Enviar prova</button>
+            </div>
+        </section>
+
+        <!-- Tela 3: a nota calculada pela API (POST /attempts/:id/submit) -->
+        <section id="result-screen" hidden>
+            <div class="card score-card">
+                <p class="hint">Resultado de <strong id="result-student"></strong></p>
+                <p id="result-score" class="score-value"></p>
+                <p id="result-max" class="score-max"></p>
+                <p id="result-pending"></p>
+            </div>
+
+            <div id="result-list"></div>
+
+            <div class="center">
+                <button id="back-button" class="primary">Voltar para minhas provas</button>
+            </div>
+        </section>
+
+        <!-- Área do professor: corrige as dissertativas (GET /attempts, PATCH /answers/:id/grade) e cadastra questões -->
+        <section id="teacher-screen" hidden>
+            <div class="tabs">
+                <button id="tab-attempts" class="tab active">Correções <span id="pending-count" class="count" title="Aguardando correção" hidden></span></button>
+                <button id="tab-questions" class="tab">Questões</button>
+            </div>
+
+            <!-- Aba Correções: tentativas dos alunos e correção das dissertativas -->
+            <div id="attempts-panel">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Tentativas</h2>
+                        <div class="header-actions">
+                            <label class="inline-check"><input id="only-pending" type="checkbox"> Só as que faltam corrigir</label>
+                            <button id="refresh-button" class="small">Atualizar</button>
+                        </div>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Aluno</th>
+                                    <th>Início</th>
+                                    <th>Situação</th>
+                                    <th>Nota</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="attempts-table"></tbody>
+                        </table>
+                    </div>
+
+                    <p id="teacher-message" class="message" aria-live="polite"></p>
+                </div>
+
+                <div id="attempt-detail" hidden></div>
+            </div>
+
+            <!-- Aba Questões: cadastrar (POST /questions/...) e ver as que já existem (GET /questions) -->
+            <div id="questions-panel" hidden>
+                <div class="card">
+                    <h2>Nova questão</h2>
+
+                    <label>Tipo</label>
+                    <div id="type-picker" class="type-picker">
+                        <label class="choice"><input type="radio" name="new-type" value="multiple_choice" checked> Múltipla escolha</label>
+                        <label class="choice"><input type="radio" name="new-type" value="true_false"> Verdadeiro ou falso</label>
+                        <label class="choice"><input type="radio" name="new-type" value="numeric"> Numérica</label>
+                        <label class="choice"><input type="radio" name="new-type" value="essay"> Dissertativa</label>
+                    </div>
+
+                    <label for="new-statement">Enunciado</label>
+                    <textarea id="new-statement" rows="3" placeholder="Ex.: Qual é a capital do Brasil?"></textarea>
+
+                    <label for="new-weight">Peso (quantos pontos vale)</label>
+                    <input id="new-weight" class="short-field" type="text" inputmode="decimal" placeholder="Ex.: 2">
+
+                    <!-- os campos que mudam conforme o tipo (alternativas, resposta numérica...) são desenhados pelo app.js -->
+                    <div id="type-fields"></div>
+
+                    <button id="create-question-button" class="primary home-action">Cadastrar questão</button>
+                    <p id="question-form-message" class="message" aria-live="polite"></p>
+                </div>
+
+                <div class="card">
+                    <h2>Questões cadastradas</h2>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Enunciado</th>
+                                    <th>Tipo</th>
+                                    <th>Peso</th>
+                                    <th>Resposta correta</th>
+                                </tr>
+                            </thead>
+                            <tbody id="questions-table"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Regras da API: cada botão manda de propósito um pedido proibido e mostra a resposta real da API -->
+        <section id="rules-screen" hidden>
+            <div class="card">
+                <div class="card-header">
+                    <h2>Regras da API</h2>
+                    <button id="run-all-rules" class="primary small">Testar todas</button>
+                </div>
+                <p class="hint">
+                    O front nunca faz pedidos proibidos, então estas regras não aparecem no uso normal.
+                    Aqui, cada botão manda <strong>de propósito</strong> um pedido que a API deve recusar e mostra a resposta real dela.
+                    A API barra antes de gravar, então <strong>nada é salvo no banco</strong>.
+                </p>
+                <p id="rules-message" class="message" aria-live="polite"></p>
+            </div>
+
+            <div id="rules-list"></div>
+        </section>
+    </main>
+
+    <!-- Painel de chamadas: mostra cada pedido que o front faz para a API, como uma aba Rede resumida -->
+    <aside class="api-log">
+        <button id="api-log-toggle" class="api-log-bar" aria-expanded="false">
+            <span class="api-log-title">Chamadas à API</span>
+            <span id="api-log-last" class="api-log-last">Nenhuma chamada ainda</span>
+            <span id="api-log-arrow" class="api-log-arrow">▲</span>
+        </button>
+        <ol id="api-log-list" class="api-log-list" hidden></ol>
+    </aside>
+
+    <script src="app.js"></script>
+</body>
+</html>
